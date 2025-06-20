@@ -3,7 +3,7 @@
 class VariantBlueprint < Blueprinter::Base
   identifier :id
 
-  fields :sku, :color, :size
+  fields :sku, :color, :size, :variant_stock
 
   field :images do |variant, _opts|
     variant.images.map do |img|
