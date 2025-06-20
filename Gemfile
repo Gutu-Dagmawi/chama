@@ -4,7 +4,9 @@ source "https://rubygems.org"
 gem "rails", "~> 8.0.2"
 # Use sqlite3 as the database for Active Record
 gem "sqlite3", ">= 2.1"
-# Use the Puma web server [https://github.com/puma/puma]
+# Use postgresql as the database for both development and production
+gem "pg"
+# Use the Puma web server [https://github.com/puma/ uma]
 gem "puma", ">= 5.0"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
@@ -26,6 +28,14 @@ gem "bootsnap", require: false
 # Authentication
 gem "rodauth-rails"
 
+# Pagination
+gem "pagy"
+
+# Blueprinter for fast serialization
+gem "blueprinter"
+# Api docs
+gem "rswag-ui"
+gem "rswag-api"
 
 # Deploy this application anywhere as a Docker container [https://kamal-deploy.org]
 gem "kamal", require: false
@@ -34,7 +44,7 @@ gem "kamal", require: false
 gem "thruster", require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-# gem "image_processing", "~> 1.2"
+gem "image_processing", "~> 1.2"
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 # gem "rack-cors"
@@ -52,19 +62,20 @@ group :development, :test do
   gem "faker"
   gem "database_cleaner-active_record"
 
-  # API documentation
-  gem "rswag-ui"
-  gem "rswag-api"
+  # API spec
+
   gem "rswag-specs"
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
 end
-# Enables Sequel to use Active Record's database connection
-gem "sequel-activerecord_connection", "~> 2.0", require: false
+
 # Used by Rodauth for password hashing
 gem "bcrypt", "~> 3.1", require: false
 # Used by Rodauth for JWT support
 gem "jwt", "~> 2.9", require: false
 # Used by Rodauth for rendering built-in view and email templates
 gem "tilt", "~> 2.4", require: false
+# Enables Sequel to use Active Record's database connection
+gem "sequel-activerecord_connection", "~> 2.0", require: false
+

@@ -13,7 +13,7 @@ class RodauthMain < Rodauth::Rails::Auth
 
     # ==> General
     # Initialize Sequel and have it reuse Active Record's database connection.
-    db Sequel.sqlite(extensions: :activerecord_connection, keep_reference: false)
+    db Sequel.postgres(extensions: :activerecord_connection, keep_reference: false)
     # Avoid DB query that checks accounts table schema at boot time.
     convert_token_id_to_integer? { Account.columns_hash["id"].type == :integer }
 
@@ -25,7 +25,7 @@ class RodauthMain < Rodauth::Rails::Auth
 
     # The secret key used for hashing public-facing tokens for various features.
     # Defaults to Rails `secret_key_base`, but you can use your own secret key.
-    # hmac_secret "89ecc92534ca336d412017ca6294b4f8daa28045d00920a8ef0e7012e4b404912b5e9ce5837e7bb37620ee83ea59ee98da3642d3c7406e6fb1a83908d45844d9"
+    # hmac_secret "85c27dc7b36657c871627e9d829c55dbb8e3e9a5e96edb143a8595740574e705da89c1829b784f215fe333f6b437f641e95ad0830ad516c4458abfb147735fc1"
 
     # Set JWT secret, which is used to cryptographically protect the token.
     jwt_secret { hmac_secret }

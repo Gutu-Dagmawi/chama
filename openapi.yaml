@@ -1,0 +1,378 @@
+openapi: 3.1.0
+info:
+  title: Chama Api - OPENAPI 3.0
+  version: 1.0.0
+  description: >
+    This is the first version of our ecommerce API.
+    The platform enables customers to browse through 
+    collections and purchase what they like.
+  contact:
+    email: dagmawi.gutu@bitscollege.edu.et
+    name: Dagmawi Gutu
+
+servers:
+  - url: https://localhost:3000/v1
+
+tags:
+  - name: products
+    description: CRUD operations for products (STI-enabled)
+  - name: variants
+    description: Manage product variants (e.g. different sizes/colors of shoes)
+  - name: categories
+    description: CRUD operations for product categories
+
+paths:
+  /products:
+    post:
+      tags: [ products ]
+      summary: Create a product with variants and images
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - type
+                - base_price
+                - variants
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+                  enum: [ Shoe ]
+                base_price:
+                  type: number
+                  format: double
+                description:
+                  type: string
+                category_id:
+                  type: integer
+                brand:
+                  type: string
+                gender:
+                  type: string
+                  enum: [ male, female ]
+                variants:
+                  type: string
+                  description: >
+                    JSON-encoded array of variant objects. Each object must include sku, color, size.
+                variant_images:
+                  type: object
+                  additionalProperties:
+                    type: array
+                    items:
+                      type: string
+                      format: binary
+                  description: >
+                    Images for each variant keyed by SKU. Field names should follow the pattern `variant_images[SKU][]`.
+                    For example: `variant_images[SH-k2][]` for images of the variant with SKU `SH-k2`.
+      responses:
+        '201':
+          description: Product created successfully
+
+  /products/{uuid}:
+    parameters:
+      - $ref: '#/components/parameters/UUID'
+
+    get:
+      tags: [ products ]
+      summary: Retrieve a product by UUID
+      operationId: getProductByUuid
+      responses:
+        200:
+          description: Product retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        400:
+          description: Invalid UUID format
+        404:
+          description: Product not found
+
+    put:
+      tags: [ products ]
+      summary: Replace a product by UUID
+      operationId: replaceProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        200:
+          description: Product replaced successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        400:
+          description: Invalid UUID
+        404:
+          description: Product not found
+
+    delete:
+      tags: [ products ]
+      summary: Delete a product
+      operationId: deleteProduct
+      responses:
+        200:
+          description: Product deleted successfully
+        400:
+          description: Invalid UUID
+        404:
+          description: Product not found
+  # Variants
+  /products/{uuid}/variants:
+    parameters:
+      - $ref: '#/components/parameters/UUID'
+
+    post:
+      tags: [ variants ]
+      summary: Add a variant to a product
+      operationId: createVariant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Variant'
+      responses:
+        201:
+          description: Variant created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Variant'
+        422:
+          description: Invalid variant data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /products/{uuid}/variants/{sku}:
+    parameters:
+      - $ref: '#/components/parameters/UUID'
+      - $ref: '#/components/parameters/sku'
+
+    get:
+      tags: [ variants ]
+      summary: Retrieve a specific variant by SKU
+      operationId: getVariantBySku
+      responses:
+        200:
+          description: Variant retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Variant'
+        404:
+          description: Variant not found
+
+    put:
+      tags: [ variants ]
+      summary: Replace a variant by SKU
+      operationId: replaceVariant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Variant'
+      responses:
+        200:
+          description: Variant replaced successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Variant'
+        404:
+          description: Variant not found
+
+    delete:
+      tags: [ variants ]
+      summary: Delete a variant by SKU
+      operationId: deleteVariant
+      responses:
+        200:
+          description: Variant deleted successfully
+        400:
+          description: Invalid SKU
+        404:
+          description: Variant not found
+
+  # Categories
+  /categories:
+    post:
+      tags: [ categories ]
+      summary: Create a new category
+      operationId: createCategory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+      responses:
+        201:
+          description: Category created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        422:
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /categories/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+
+    get:
+      tags: [ categories ]
+      summary: Retrieve a category by ID
+      operationId: getCategoryById
+      responses:
+        200:
+          description: Category retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        404:
+          description: Category not found
+
+components:
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      description: Numeric identifier of the category
+      schema:
+        type: integer
+        format: int64
+
+    UUID:
+      name: uuid
+      in: path
+      required: true
+      description: UUID of the product
+      schema:
+        type: string
+        format: uuid
+
+    sku:
+      name: sku
+      in: path
+      required: true
+      description: Stock Keeping Unit of the variant
+      schema:
+        type: string
+  schemas:
+    Category:
+      type: object
+      required: [ id, name ]
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    Product:
+      type: object
+      required:
+        - uuid
+        - type
+        - name
+        - base_price
+        - variants
+        - description
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [ Shoe ]
+          description: STI subclass name (e.g., "Shoe")
+        name:
+          type: string
+          example: "Nike Air Force 3bm"
+        description:
+          type: string
+          example: "High-top basketball shoes with premium cushioning"
+        stock:
+          type: integer
+          format: int64
+        base_price:
+          type: number
+          format: double
+          description: Base price in decimal
+        category_id:
+          type: integer
+          format: int64
+          description: Foreign key to the category
+        category:
+          $ref: '#/components/schemas/Category'
+        variants:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/Variant'
+        brand:
+          type: string
+          example: "Nike"
+        gender:
+          type: string
+          enum: [ male, female ]
+    Variant:
+      type: object
+      required:
+        - sku
+        - color
+        - size
+        - product_id
+      properties:
+        sku:
+          type: string
+          example: 'SH-k2-O9'
+        color:
+          type: string
+          pattern: '^#(?:[0-9a-fA-F]{3}){1,2}$'
+          example: "#00FF00"
+        size:
+          type: integer
+          format: int32
+          minimum: 10
+          maximum: 50
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/Image'
+        product_id:
+          type: string
+          format: uuid
+          description: Foreign key to the product
+        product:
+          $ref: '#/components/schemas/Product'
+    Image:
+      type: string
+      format: binary
+      description: Uploadable image file for the variant
+    Error:
+      type: object
+      required: [ code, message ]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
