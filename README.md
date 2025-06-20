@@ -1,24 +1,56 @@
-# README
+# Chama - E-commerce Product Management API
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+  Chama is a Ruby on Rails API application for managing an e-commerce product catalog. It provides endpoints for managing categories, products, and their variants with features like image handling, authentication, and more.
 
-Things you may want to cover:
+## Technology Stack
 
-* Ruby version
+- Ruby 3.3.8
+- Rails 8.0.2
+- PostgreSQL database
+- Rodauth for authentication
+- Blueprinter for JSON serialization
+- RSpec for testing
 
-* System dependencies
+## Development Setup
 
-* Configuration
+### Prerequisites
 
-* Database creation
+- Ruby 3.3.8
+- PostgreSQL
+- Git
 
-* Database initialization
+### Local Setup
 
-* How to run the test suite
+1. Clone the repository:
+   ```
+   git clone <repository-url>
+   cd chama
+   ```
 
-* Services (job queues, cache servers, search engines, etc.)
+2. Install dependencies:
+   ```
+   bundle install
+   ```
 
-* Deployment instructions
+3. Configure database credentials:
 
-* ...
+   Before setting up the database, make sure to update the PostgreSQL username and password in the database configuration file to use your own credentials:
+   ```
+   # config/database.yml
+   username: your_postgres_username
+   password: your_postgres_password
+   ```
+
+4. Set up the database:
+   ```
+   rails db:create
+   rails db:migrate
+   rails db:seed  # if seed data is available
+   ```
+
+4. Start the server:
+   ```
+   rails server
+   ```
+
+5. The API will be available at http://localhost:3000
