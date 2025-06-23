@@ -23,6 +23,17 @@ module Chama
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
 
+    # Enable CORS
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins '*'  # Your frontend dev server
+
+        resource '*',
+                 headers: :any,
+                 methods: [ :get, :post, :put, :patch, :delete, :options, :head ],
+                 credentials: false
+      end
+    end
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.

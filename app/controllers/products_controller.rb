@@ -4,7 +4,7 @@ class ProductsController < ApplicationController
   # GET /products
   def index
     @products = Shoe.all
-    render json: ProductBlueprint.render(@products)
+    render json: ProductBlueprint.render(@products, root: "products")
   end
 
   # GET /products/1
